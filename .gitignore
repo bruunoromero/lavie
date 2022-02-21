@@ -15,4 +15,4 @@ web-build/
 lib
 .bsb.lock
 .merlin
-.bs.js
+*.bs.js

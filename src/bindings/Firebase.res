@@ -61,10 +61,5 @@ type config = {
   measurementId: string,
 }
 
-type persistance
-
-@abstract
-type opts = {@optional persistance: persistance}
-
 @module("firebase/app")
 external initializeApp: config => app = "initializeApp"
