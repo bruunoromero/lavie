@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "lavie",
     "name": "lavie",
     "slug": "lavie",
     "version": "1.0.0",
