@@ -20,20 +20,23 @@ let make = (~navigation as _, ~route as _) => {
     None
   }, [response])
 
-  <View
-    style={style(
-      ~flex=1.0,
-      ~alignItems=#center,
-      ~backgroundColor="#fff",
-      ~justifyContent=#center,
-      (),
-    )}>
-    <Button
-      disabled={Option.isNone(request)}
-      title="Login"
-      onPress={_ => {
-        promptAsync()
-      }}
-    />
-  </View>
+  <Screen>
+    <Header title="Home" />
+    <View
+      style={style(
+        ~flex=1.0,
+        ~alignItems=#center,
+        ~backgroundColor="#fff",
+        ~justifyContent=#center,
+        (),
+      )}>
+      <Button
+        disabled={Option.isNone(request)}
+        title="Login"
+        onPress={_ => {
+          promptAsync()
+        }}
+      />
+    </View>
+  </Screen>
 }

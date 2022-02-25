@@ -1,11 +1,63 @@
+open ReactNative
+
+type animation = {scale: float}
+
+type colors = {
+  primary: string,
+  accent: string,
+  background: string,
+  surface: string,
+  error: string,
+  text: string,
+  onSurface: string,
+  disabled: string,
+  placeholder: string,
+  backdrop: string,
+  notification: string,
+}
+
+type fonts
+
+type theme = {
+  dark: bool,
+  roundness: float,
+  colors: colors,
+  animation: animation,
+  fonts: fonts,
+}
+
+@module("react-native-paper") external defaultTheme: theme = "DefaultTheme"
+@module("react-native-paper") external useTheme: unit => theme = "useTheme"
+
 module Appbar = {
   module Header = {
     @module("./ReactNativePaper.js") @react.component
-    external make: (~children: React.element) => React.element = "AppbarHeader"
+    external make: (~children: React.element, ~style: Style.t=?) => React.element = "AppbarHeader"
   }
-  
+
   module Content = {
     @module("./ReactNativePaper.js") @react.component
     external make: (~title: string) => React.element = "AppbarContent"
   }
+
+  module BackAction = {
+    @module("./ReactNativePaper.js") @react.component
+    external make: (~onPress: unit => unit=?) => React.element = "AppbarBackAction"
+  }
+}
+module Avatar = {
+  module Text = {
+    @module("./ReactNativePaper.js") @react.component
+    external make: (~label: string, ~size: float=?) => React.element = "AvatarText"
+  }
+}
+
+module Surface = {
+  @module("react-native-paper") @react.component
+  external make: (~children: React.element, ~style: Style.t=?) => React.element = "Surface"
+}
+
+module Provider = {
+  @module("react-native-paper") @react.component
+  external make: (~children: React.element, ~theme: theme=?) => React.element = "Provider"
 }

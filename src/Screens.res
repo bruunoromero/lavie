@@ -1,5 +1,3 @@
-module AppHeader = Header
-
 open ReactNavigation
 
 module NotAuthed = {
@@ -16,14 +14,16 @@ module NotAuthed = {
 }
 
 module Authed = {
-  include Stack.Make({
-    type params = unit
-  })
+  include Navigators.Authed
 
   @react.component
   let make = () => {
-    <Navigator screenOptions={_ => options(~header=Header.render(_ => <AppHeader />), ())}>
-      <Screen name="Home" component=HomeScreen.make />
+    <Navigator screenOptions={_ => options(~headerShown=false, ())}>
+      <Group> <Screen name="Home" component=HomeScreen.make /> </Group>
+      <Group screenOptions={_ => options(~presentation=#fullScreenModal, ())}>
+        <Screen name="Profile" component=ProfileScreen.make />
+        <Screen name="ProfileSetup" component=ProfileSetupScreen.make />
+      </Group>
     </Navigator>
   }
 }

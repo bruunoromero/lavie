@@ -18,9 +18,14 @@
     "@rescript/react",
     "rescript-react-native",
     "@ryyppy/rescript-promise",
-    "rescript-react-navigation"
+    "rescript-react-navigation",
+    "@reasonml-community/graphql-ppx",
+    "@rescriptbr/react-query"
   ],
   "bsc-flags": [
     "-open Belt"
+  ],
+  "ppx-flags": [
+    "@reasonml-community/graphql-ppx/ppx"
   ]
 }

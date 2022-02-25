@@ -4,7 +4,7 @@ module User = {
   type t
 
   @send
-  external getIdToken: (t, bool) => Promise.t<string> = "getIdToken"
+  external getIdToken: t => Promise.t<string> = "getIdToken"
 
   @get
   external uid: t => string = "uid"
@@ -28,7 +28,7 @@ module Auth = {
   }
 
   module GoogleProvider = {
-    @module("firebase/auth") @val
+    @module("firebase/auth")
     external _provider: Provider.t = "GoogleAuthProvider"
 
     let credential = Provider.credential(_provider)
@@ -38,7 +38,7 @@ module Auth = {
   external get: (~app: app=?) => t = "getAuth"
 
   @module("firebase/auth")
-  external _OnAuthStateChanged: (t, Js.null_undefined<User.t> => unit) => subscription =
+  external _onAuthStateChanged: (t, Js.null_undefined<User.t> => unit) => subscription =
     "onAuthStateChanged"
 
   @module("firebase/auth")
@@ -47,8 +47,11 @@ module Auth = {
   @module("firebase/auth")
   external signInWithCredential: (t, Credential.t) => unit = "signInWithCredential"
 
+  @get @return(nullable)
+  external currentUser: t => option<User.t> = "currentUser"
+
   let onAuthStateChanged = (auth, cb) =>
-    _OnAuthStateChanged(auth, user => user->Js.Null_undefined.toOption->cb)
+    _onAuthStateChanged(auth, user => user->Js.Null_undefined.toOption->cb)
 }
 
 type config = {
