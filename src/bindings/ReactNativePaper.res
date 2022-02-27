@@ -31,24 +31,24 @@ type theme = {
 
 module Appbar = {
   module Header = {
-    @module("./ReactNativePaper.js") @react.component
+    @module("./ReactNativePaper.ts") @react.component
     external make: (~children: React.element, ~style: Style.t=?) => React.element = "AppbarHeader"
   }
 
   module Content = {
-    @module("./ReactNativePaper.js") @react.component
+    @module("./ReactNativePaper.ts") @react.component
     external make: (~title: string) => React.element = "AppbarContent"
   }
 
   module BackAction = {
-    @module("./ReactNativePaper.js") @react.component
+    @module("./ReactNativePaper.ts") @react.component
     external make: (~onPress: unit => unit=?) => React.element = "AppbarBackAction"
   }
 }
 
 module Avatar = {
   module Text = {
-    @module("./ReactNativePaper.js") @react.component
+    @module("./ReactNativePaper.ts") @react.component
     external make: (~label: string, ~size: float=?) => React.element = "AvatarText"
   }
 }
