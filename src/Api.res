@@ -104,7 +104,7 @@ let useRequest:
   }
 
 module Profile = {
-  let useProfile = () => Loaded(
+  let use = () => Loaded(
     Profile.t(~id="123", ~userId="123", ~hydrationGoal=2000, ~username="Bruno Romero"),
   )
 
@@ -114,7 +114,7 @@ module Profile = {
 }
 
 module Hydration = {
-  let useHydration = () => Loaded([
+  let use = () => Loaded([
     Hydration.t(~id="123", ~amount=200, ~userId="123"),
     Hydration.t(~id="123", ~amount=200, ~userId="123"),
   ])

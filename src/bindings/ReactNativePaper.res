@@ -45,6 +45,7 @@ module Appbar = {
     external make: (~onPress: unit => unit=?) => React.element = "AppbarBackAction"
   }
 }
+
 module Avatar = {
   module Text = {
     @module("./ReactNativePaper.js") @react.component
@@ -52,9 +53,51 @@ module Avatar = {
   }
 }
 
+module IconButton = {
+  @module("react-native-paper") @react.component
+  external make: (
+    ~icon: string,
+    ~color: string=?,
+    ~onPress: ReactNative.Event.pressEvent => unit,
+  ) => React.element = "IconButton"
+}
+
+module Fab = {
+  @module("react-native-paper") @react.component
+  external make: (
+    ~icon: string,
+    ~small: bool=?,
+    ~color: string=?,
+    ~style: Style.t=?,
+    ~disabled: bool=?,
+    ~onPress: ReactNative.Event.pressEvent => unit,
+  ) => React.element = "FAB"
+}
+
+module Button = {
+  @module("react-native-paper") @react.component
+  external make: (
+    ~icon: string=?,
+    ~compact: bool=?,
+    ~style: Style.t=?,
+    ~disabled: bool=?,
+    ~uppercase: bool=?,
+    ~labelStyle: Style.t=?,
+    ~children: React.element,
+    ~mode: [#text | #outlined | #contained]=?,
+    ~onPress: ReactNative.Event.pressEvent => unit,
+  ) => React.element = "Button"
+}
+
 module Surface = {
   @module("react-native-paper") @react.component
   external make: (~children: React.element, ~style: Style.t=?) => React.element = "Surface"
+}
+
+module ProgressBar = {
+  @module("react-native-paper") @react.component
+  external make: (~progress: float, ~color: string=?, ~style: Style.t=?) => React.element =
+    "ProgressBar"
 }
 
 module Provider = {

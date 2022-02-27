@@ -26,3 +26,11 @@ module WebBrowser = {
   @module("expo-web-browser")
   external maybeCompleteAuthSession: unit => unit = "maybeCompleteAuthSession"
 }
+
+module VectorIcons = {
+  module MaterialCommunityIcons = {
+    @module("@expo/vector-icons") @react.component
+    external make: (~name: string, ~size: float=?, ~color: string=?) => React.element =
+      "MaterialCommunityIcons"
+  }
+}

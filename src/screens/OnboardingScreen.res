@@ -1,11 +1,19 @@
 open ReactNative
 open Style
 
+let useStyles = Theme.makeStyles(_ =>
+  {
+    "container": viewStyle(~margin=0.0->dp, ()),
+  }
+)
+
 @react.component
-let make = (~isOpen: bool) => {
-  <ReactNativeModal style={viewStyle(~margin=0.0->dp, ())} isVisible=isOpen hasBackdrop=false>
-    <View style={viewStyle(~flex=1.0, ~backgroundColor="#fff", ())}>
-      <Header title="Onboarding" /> <View> <Text> {React.string("ola mundo")} </Text> </View>
-    </View>
+let make = (~isOpen) => {
+  let styles = useStyles()
+
+  <ReactNativeModal style={styles["container"]} isVisible=isOpen hasBackdrop=false>
+    <LVScreen>
+      <LVHeader title="Onboarding" /> <View> <Text> {React.string("ola mundo")} </Text> </View>
+    </LVScreen>
   </ReactNativeModal>
 }

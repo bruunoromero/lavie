@@ -20,9 +20,13 @@ module Strings = {
   let split = (str, char) => List.toArray(String.split_on_char(char, str))
 }
 
-let unwrapComponent = (comp: option<React.element>) => {
+let unwrapComponent = comp => {
   switch comp {
   | Some(c) => c
   | None => React.null
   }
+}
+
+module Floats = {
+  let toRate = pct => pct *. 100.0
 }

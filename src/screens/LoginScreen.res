@@ -20,8 +20,8 @@ let make = (~navigation as _, ~route as _) => {
     None
   }, [response])
 
-  <Screen>
-    <Header title="Home" />
+  <LVScreen>
+    <LVHeader title="Home" />
     <View
       style={style(
         ~flex=1.0,
@@ -38,5 +38,5 @@ let make = (~navigation as _, ~route as _) => {
         }}
       />
     </View>
-  </Screen>
+  </LVScreen>
 }
