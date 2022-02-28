@@ -53,6 +53,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@reasonml-community/graphql-ppx": "^1.2.3",
+    "@testing-library/jest-native": "^4.0.4",
     "@testing-library/react-native": "^9.0.0",
     "@types/jest": "^27.4.1",
     "@types/react": "~17.0.21",

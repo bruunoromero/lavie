@@ -1,4 +1,5 @@
-open Jest
+open! Jest
+open JestNative
 open ReactNativeTestingLibrary
 open TestHelper
 
@@ -186,20 +187,126 @@ describe("HomeScreen", () => {
     describe("Progress", () => {
       it("should render without crashing", () => {
         render(<HomeScreen.Loaded.Progress percentage={0.5} />)->toJSON->expect->toMatchSnapshot
+        render(<HomeScreen.Loaded.Progress percentage={0.2} />)->toJSON->expect->toMatchSnapshot
+        render(<HomeScreen.Loaded.Progress percentage={0.0} />)->toJSON->expect->toMatchSnapshot
+        render(<HomeScreen.Loaded.Progress percentage={1.0} />)->toJSON->expect->toMatchSnapshot
       })
     })
 
     describe("BottomSheet", () => {
       it("should render without crashing", () => {
+        open State
+
         let onAdd = fn(ignore)
         let onIncrement = fn(ignore)
         let onDecrement = fn(ignore)
-        let state: State.t = {glassesToAdd: 1, isAdding: false}
+        let state = {glassesToAdd: 1, isAdding: false}
 
         render(<HomeScreen.Loaded.BottomSheet state onAdd onIncrement onDecrement />)
         ->toJSON
         ->expect
         ->toMatchSnapshot
+      })
+
+      it("should call increment, decrement and add when buttons are pressed", () => {
+        open State
+
+        let onAdd = fn(ignore)
+        let onIncrement = fn(ignore)
+        let onDecrement = fn(ignore)
+        let state = {glassesToAdd: 2, isAdding: false}
+
+        let result = render(<HomeScreen.Loaded.BottomSheet state onAdd onIncrement onDecrement />)
+
+        expect(onAdd)->not->toHaveBeenCalled
+        expect(onIncrement)->not->toHaveBeenCalled
+        expect(onDecrement)->not->toHaveBeenCalled
+
+        result->getByTestId(#Str("add"))->FireEvent.press
+        expect(onAdd)->toHaveBeenCalledTimes(1)
+
+        result->getByTestId(#Str("increment"))->FireEvent.press
+        expect(onIncrement)->toHaveBeenCalledTimes(1)
+
+        result->getByTestId(#Str("decrement"))->FireEvent.press
+        expect(onDecrement)->toHaveBeenCalledTimes(1)
+      })
+
+      it("should make buttons disabled or enabled based on the state", () => {
+        open State
+
+        let onAdd = fn(ignore)
+        let onIncrement = fn(ignore)
+        let onDecrement = fn(ignore)
+        let state = ref({glassesToAdd: 1, isAdding: false})
+
+        let makeElement = () =>
+          <HomeScreen.Loaded.BottomSheet state=state.contents onAdd onIncrement onDecrement />
+
+        let result = render(makeElement())
+        result->getByTestId(#Str("add"))->expect->toBeEnabled
+        result->getByTestId(#Str("decrement"))->expect->toBeDisabled
+        result->toJSON->expect->toMatchSnapshot
+
+        state := {glassesToAdd: 2, isAdding: false}
+        result->update(makeElement())
+
+        result->getByTestId(#Str("add"))->expect->toBeEnabled
+        result->getByTestId(#Str("decrement"))->expect->toBeEnabled
+        result->toJSON->expect->toMatchSnapshot
+
+        state := {glassesToAdd: 2, isAdding: true}
+        result->update(makeElement())
+
+        result->getByTestId(#Str("add"))->expect->toBeDisabled
+        result->getByTestId(#Str("decrement"))->expect->toBeEnabled
+        result->toJSON->expect->toMatchSnapshot
+
+        state := {glassesToAdd: 1, isAdding: true}
+        result->update(makeElement())
+
+        result->getByTestId(#Str("add"))->expect->toBeDisabled
+        result->getByTestId(#Str("decrement"))->expect->toBeDisabled
+        result->toJSON->expect->toMatchSnapshot
+      })
+
+      it("should render the glass count based on the state props", () => {
+        open State
+
+        let onAdd = fn(ignore)
+        let onIncrement = fn(ignore)
+        let onDecrement = fn(ignore)
+        let state = ref({glassesToAdd: 1, isAdding: false})
+
+        let makeElement = () =>
+          <HomeScreen.Loaded.BottomSheet state=state.contents onAdd onIncrement onDecrement />
+
+        let result = render(makeElement())
+
+        result->getByTestId(#Str("glass-count"))->expect->toHaveTextContent(#Str("1x"))
+        result->getByTestId(#Str("glass-amount-count"))->expect->toHaveTextContent(#Str("200ml"))
+        result->toJSON->expect->toMatchSnapshot
+
+        state := {glassesToAdd: 2, isAdding: true}
+        result->update(makeElement())
+
+        result->getByTestId(#Str("glass-count"))->expect->toHaveTextContent(#Str("2x"))
+        result->getByTestId(#Str("glass-amount-count"))->expect->toHaveTextContent(#Str("400ml"))
+        result->toJSON->expect->toMatchSnapshot
+
+        state := {glassesToAdd: 3, isAdding: true}
+        result->update(makeElement())
+
+        result->getByTestId(#Str("glass-count"))->expect->toHaveTextContent(#Str("3x"))
+        result->getByTestId(#Str("glass-amount-count"))->expect->toHaveTextContent(#Str("600ml"))
+        result->toJSON->expect->toMatchSnapshot
+
+        state := {glassesToAdd: 10, isAdding: true}
+        result->update(makeElement())
+
+        result->getByTestId(#Str("glass-count"))->expect->toHaveTextContent(#Str("10x"))
+        result->getByTestId(#Str("glass-amount-count"))->expect->toHaveTextContent(#Str("2L"))
+        result->toJSON->expect->toMatchSnapshot
       })
     })
 
@@ -217,6 +324,117 @@ describe("HomeScreen", () => {
       ]
 
       render(<HomeScreen.Loaded navigation profile hydration />)->toJSON->expect->toMatchSnapshot
+    })
+
+    it("should navigate to profile when avatar is pressed", () => {
+      let profile = Profile.t(
+        ~id="1234",
+        ~username="Bruno Romero",
+        ~userId="1234",
+        ~hydrationGoal=2000,
+      )
+
+      let hydration = [
+        Hydration.t(~id="123", ~amount=200, ~userId="123"),
+        Hydration.t(~id="123", ~amount=200, ~userId="123"),
+      ]
+
+      let result = render(<HomeScreen.Loaded navigation profile hydration />)
+
+      expect(NavigationMock.navigate(navigation))->not->toHaveBeenCalled
+      result->getByTestId(#Str("avatar-button"))->FireEvent.press
+      expect(NavigationMock.navigate(navigation))->toHaveBeenCalledWith("Profile")
+    })
+
+    it("should render the amount and progress based on hydration and profile", () => {
+      let profile = ref(
+        Profile.t(~id="1234", ~username="Bruno Romero", ~userId="1234", ~hydrationGoal=2000),
+      )
+
+      let hydration = ref([
+        Hydration.t(~id="123", ~amount=200, ~userId="123"),
+        Hydration.t(~id="123", ~amount=200, ~userId="123"),
+      ])
+
+      let makeElement = () =>
+        <HomeScreen.Loaded navigation profile=profile.contents hydration=hydration.contents />
+
+      let result = render(makeElement())
+
+      result->getByTestId(#Str("drunk-rate"))->expect->toHaveTextContent(#Str("20%"))
+      result->getByTestId(#Str("drunk-amount"))->expect->toHaveTextContent(#Str("400ml"))
+
+      hydration := [
+          Hydration.t(~id="123", ~amount=200, ~userId="123"),
+          Hydration.t(~id="123", ~amount=200, ~userId="123"),
+          Hydration.t(~id="123", ~amount=200, ~userId="123"),
+        ]
+      result->update(makeElement())
+
+      result->getByTestId(#Str("drunk-rate"))->expect->toHaveTextContent(#Str("30%"))
+      result->getByTestId(#Str("drunk-amount"))->expect->toHaveTextContent(#Str("600ml"))
+
+      hydration := [
+          Hydration.t(~id="123", ~amount=200, ~userId="123"),
+          Hydration.t(~id="123", ~amount=200, ~userId="123"),
+          Hydration.t(~id="123", ~amount=200, ~userId="123"),
+          Hydration.t(~id="123", ~amount=200, ~userId="123"),
+          Hydration.t(~id="123", ~amount=200, ~userId="123"),
+        ]
+      result->update(makeElement())
+
+      result->getByTestId(#Str("drunk-rate"))->expect->toHaveTextContent(#Str("50%"))
+      result->getByTestId(#Str("drunk-amount"))->expect->toHaveTextContent(#Str("1L"))
+
+      profile :=
+        Profile.t(~id="1234", ~username="Bruno Romero", ~userId="1234", ~hydrationGoal=1000)
+      result->update(makeElement())
+
+      result->getByTestId(#Str("drunk-rate"))->expect->toHaveTextContent(#Str("100%"))
+      result->getByTestId(#Str("drunk-amount"))->expect->toHaveTextContent(#Str("1L"))
+    })
+
+    it("should update the state based on buttons pressed", () => {
+      let profile = Profile.t(
+        ~id="1234",
+        ~username="Bruno Romero",
+        ~userId="1234",
+        ~hydrationGoal=2000,
+      )
+
+      let hydration = [
+        Hydration.t(~id="123", ~amount=200, ~userId="123"),
+        Hydration.t(~id="123", ~amount=200, ~userId="123"),
+      ]
+
+      let result = render(<HomeScreen.Loaded navigation profile hydration />)
+
+      result->getByTestId(#Str("glass-count"))->expect->toHaveTextContent(#Str("1x"))
+      result->getByTestId(#Str("glass-amount-count"))->expect->toHaveTextContent(#Str("200ml"))
+      result->getByTestId(#Str("decrement"))->expect->toBeDisabled
+      result->toJSON->expect->toMatchSnapshot
+
+      result->getByTestId(#Str("increment"))->FireEvent.press
+
+      result->getByTestId(#Str("glass-count"))->expect->toHaveTextContent(#Str("2x"))
+      result->getByTestId(#Str("glass-amount-count"))->expect->toHaveTextContent(#Str("400ml"))
+      result->getByTestId(#Str("decrement"))->expect->toBeEnabled
+      result->toJSON->expect->toMatchSnapshot
+
+      result->getByTestId(#Str("increment"))->FireEvent.press
+
+      result->getByTestId(#Str("glass-count"))->expect->toHaveTextContent(#Str("3x"))
+      result->getByTestId(#Str("glass-amount-count"))->expect->toHaveTextContent(#Str("600ml"))
+      result->getByTestId(#Str("decrement"))->expect->toBeEnabled
+      result->toJSON->expect->toMatchSnapshot
+
+      result->getByTestId(#Str("add"))->FireEvent.press
+
+      result->getByTestId(#Str("glass-count"))->expect->toHaveTextContent(#Str("1x"))
+      result->getByTestId(#Str("glass-amount-count"))->expect->toHaveTextContent(#Str("200ml"))
+      result->getByTestId(#Str("add"))->expect->toBeDisabled
+      result->getByTestId(#Str("decrement"))->expect->toBeDisabled
+      result->toJSON->expect->toMatchSnapshot
     })
   })
 

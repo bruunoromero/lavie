@@ -76,7 +76,7 @@ module Loaded = {
       let styles = useStyles()
       let {colors} = Theme.use()
 
-      let rate = Floats.toRate(percentage)
+      let rate = React.useMemo1(() => Floats.toRate(percentage), [percentage])
 
       <View>
         <ProgressBar progress={percentage} style={styles["bar"]} color={colors.waterBlue} />
@@ -88,7 +88,9 @@ module Loaded = {
         <View style={styles["textContainer"]}>
           <LVText.Body style={styles["label"]}>
             <Text> {React.string("You've drunk ")} </Text>
-            <Text style={styles["rate"]}> {React.string(`${Float.toString(rate)}%`)} </Text>
+            <Text testID="drunk-rate" style={styles["rate"]}>
+              {React.string(`${Float.toString(rate)}%`)}
+            </Text>
             <Text> {React.string(" of your goal")} </Text>
           </LVText.Body>
         </View>
@@ -142,27 +144,35 @@ module Loaded = {
         <SafeAreaView style={styles["safeArea"]}>
           <View style={styles["mainContainer"]}>
             <View style={styles["buttonsContainer"]}>
-              <LVButton compact=true disabled={!canDecrement} onPress={_ => onDecrement()}>
+              <LVButton
+                compact=true
+                testID="decrement"
+                disabled={!canDecrement}
+                onPress={_ => onDecrement()}>
                 <MaterialCommunityIcons name="minus" size={26.0} />
               </LVButton>
               <Surface style={styles["iconContainer"]}>
                 <MaterialCommunityIcons name="cup-water" size={38.0} color={colors.waterBlue} />
               </Surface>
-              <LVButton compact=true onPress={_ => onIncrement()}>
+              <LVButton testID="increment" compact=true onPress={_ => onIncrement()}>
                 <MaterialCommunityIcons name="plus" size={26.0} />
               </LVButton>
             </View>
             <View style={styles["labelContainer"]}>
               <LVText.Body>
-                <Text style={styles["labelCount"]}>
+                <Text testID="glass-count" style={styles["labelCount"]}>
                   {React.string(`${Int.toString(state.glassesToAdd)}x`)}
                 </Text>
-                <Text> {React.string(` glasses (200ml)`)} </Text>
+                <Text testID="glass-amount-count">
+                  {React.string(
+                    ` glasses (${Logic.glassesToAmount(state.glassesToAdd)->Logic.amountToStr})`,
+                  )}
+                </Text>
               </LVText.Body>
             </View>
           </View>
           <View style={styles["footerContainer"]}>
-            <LVButton icon="water" disabled={state.isAdding} onPress={_ => onAdd()}>
+            <LVButton testID="add" icon="water" disabled={state.isAdding} onPress={_ => onAdd()}>
               {React.string("add drink")}
             </LVButton>
           </View>
@@ -200,7 +210,8 @@ module Loaded = {
     <LVScreen>
       <LVHeader
         title="Hydration"
-        right={<Pressable onPress={_ => Authed.Navigation.navigate(navigation, "Profile")}>
+        right={<Pressable
+          testID="avatar-button" onPress={_ => Authed.Navigation.navigate(navigation, "Profile")}>
           {_ => <Avatar.Text label={Profile.Logic.initials(profile)} size={42.0} />}
         </Pressable>}
       />
@@ -208,7 +219,7 @@ module Loaded = {
         <View style={styles["titleContainer"]}>
           <LVText.LargeTitle style={styles["title"]}>
             <Text> {React.string("Today you took ")} </Text>
-            <Text style={styles["amount"]}>
+            <Text testID="drunk-amount" style={styles["amount"]}>
               {React.string(Logic.amountToStr(hydrationAmount))}
             </Text>
             <Text> {React.string(" of water ")} </Text>

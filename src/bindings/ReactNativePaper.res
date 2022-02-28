@@ -81,6 +81,7 @@ module Button = {
     ~compact: bool=?,
     ~style: Style.t=?,
     ~disabled: bool=?,
+    ~testID: string=?,
     ~uppercase: bool=?,
     ~labelStyle: Style.t=?,
     ~children: React.element,
@@ -96,8 +97,12 @@ module Surface = {
 
 module ProgressBar = {
   @module("react-native-paper") @react.component
-  external make: (~progress: float, ~color: string=?, ~style: Style.t=?) => React.element =
-    "ProgressBar"
+  external make: (
+    ~color: string=?,
+    ~progress: float,
+    ~style: Style.t=?,
+    ~testID: string=?,
+  ) => React.element = "ProgressBar"
 }
 
 module Provider = {

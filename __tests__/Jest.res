@@ -6,14 +6,15 @@
 @val external test: (string, @uncurry (unit => unit)) => unit = "test"
 @val external testAsync: (string, @uncurry (unit => Promise.t<unit>)) => unit = "test"
 
-type e
-@val external expect: 'a => e = "expect"
-@send external toBe: (e, 'a) => unit = "toBe"
-@send external toEqual: (e, 'a) => unit = "toEqual"
-@send external toMatchSnapshot: e => unit = "toMatchSnapshot"
-@send external toHaveTextContent: (e, string) => unit = "toHaveTextContent"
-@send external toHaveBeenCalledWith: (e, 'a) => unit = "toHaveBeenCalledWith"
-@send external toHaveAttribute: (e, string, string) => unit = "toHaveAttribute"
+type expect
+@get external not: expect => expect = "not"
+@val external expect: 'a => expect = "expect"
+@send external toBe: (expect, 'a) => unit = "toBe"
+@send external toEqual: (expect, 'a) => unit = "toEqual"
+@send external toMatchSnapshot: expect => unit = "toMatchSnapshot"
+@send external toHaveBeenCalled: expect => unit = "toHaveBeenCalled"
+@send external toHaveBeenCalledWith: (expect, 'a) => unit = "toHaveBeenCalledWith"
+@send external toHaveBeenCalledTimes: (expect, int) => unit = "toHaveBeenCalledTimes"
 
 type fn1<'a, 'b> = @uncurry ('a => 'b)
 type fn2<'a, 'b, 'c> = @uncurry ('a, 'b) => 'c

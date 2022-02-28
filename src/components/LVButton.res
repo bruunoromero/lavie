@@ -12,19 +12,21 @@ let useStyles = Theme.makeStyles(_ =>
 
 @react.component
 let make = (
+  ~icon=?,
+  ~mode=?,
   ~style=?,
+  ~testID=?,
+  ~compact=?,
   ~disabled=?,
   ~uppercase=?,
-  ~mode=?,
   ~labelStyle=?,
-  ~compact=?,
-  ~icon=?,
   ~onPress,
   ~children,
 ) => {
   let styles = useStyles()
 
   <Button
+    ?testID
     ?icon
     ?disabled
     ?compact
